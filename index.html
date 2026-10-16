@@ -8,9 +8,9 @@
   <meta property="og:type" content="website">
   <meta property="og:title" content="백경동 ♥ 강소영 결혼합니다.">
   <meta property="og:description" content="2027년 2월 20일 토요일 오후 12시 20분, 왕십리 디노체컨벤션웨딩홀">
-  <meta property="og:image" content="https://bkdong93.github.io/kdbaik_mobile_wed/image/og-card.jpg">
-  <meta property="og:image:width" content="900">
-  <meta property="og:image:height" content="1627">
+  <meta property="og:image" content="https://bkdong93.github.io/kdbaik_mobile_wed/image/kakao-card.jpg">
+  <meta property="og:image:width" content="600">
+  <meta property="og:image:height" content="800">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Nanum+Myeongjo:wght@400;700&display=swap" rel="stylesheet">
@@ -906,6 +906,7 @@
   </div>
 
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <script src="https://t1.kakaocdn.net/kakao_js_sdk/2.7.4/kakao.min.js" crossorigin="anonymous"></script>
 
   <dialog id="rsvp">
     <button class="x" type="button" data-close-dialog aria-label="닫기">×</button>
@@ -1355,21 +1356,34 @@
     document.getElementById("toTop").addEventListener("click", () => {
       window.scrollTo({ top: 0, behavior: "smooth" });
     });
-    async function sharePage() {
-      const shareData = {
-        title: "백경동 ♥ 강소영 결혼합니다.",
-        text: "2027년 2월 20일 토요일 오후 12시 20분\n왕십리 디노체컨벤션웨딩홀",
-        url: PAGE + "?v=4"
-      };
-      if (navigator.share) {
+    function shareWithKakao() {
+      const link = { mobileWebUrl: PAGE, webUrl: PAGE };
+      Kakao.Share.sendDefault({
+        objectType: "feed",
+        content: {
+          title: "백경동 ♥ 강소영 결혼합니다.",
+          description: "2027년 2월 20일 토요일 오후 12시 20분, 왕십리 디노체컨벤션웨딩홀",
+          imageUrl: PAGE + "image/kakao-card.jpg",
+          imageWidth: 600,
+          imageHeight: 800,
+          link
+        },
+        buttons: [{ title: "청첩장 보기", link }]
+      });
+    }
+
+    function sharePage() {
+      if (window.Kakao) {
         try {
-          await navigator.share(shareData);
+          if (!Kakao.isInitialized()) Kakao.init("70a50f57a564eaedf31d6f6a09152a99");
+          shareWithKakao();
           return;
         } catch (error) {
-          if (error.name === "AbortError") return;
+          showToast("카카오톡 공유를 열지 못했습니다.");
+          return;
         }
       }
-      copyText(shareData.url);
+      copyText(PAGE);
     }
 
     document.getElementById("kakaoShare").addEventListener("click", sharePage);
