@@ -661,7 +661,7 @@
     </div>
 
     <section class="hero" id="main">
-      <img class="hero-photo" src="image/KakaoTalk_20261015_213241307_07.jpg" alt="백경동, 강소영">
+      <img class="hero-photo" src="image/cover.jpg" alt="백경동, 강소영">
       <p class="script">We're getting<br>married!</p>
       <div class="hero-copy">
         <p class="hero-names">경동 소영</p>
@@ -679,7 +679,7 @@
     </section>
 
     <div class="band">
-      <img src="image/KakaoTalk_20261015_213241307_01.jpg" alt="백경동, 강소영">
+      <img src="image/A컷/KSY_22_1840_GPT%20수정.png" alt="백경동, 강소영">
     </div>
 
     <section id="intro">
@@ -1004,29 +1004,42 @@
     });
 
     const PHOTOS = [
-      "KakaoTalk_20261015_213241307.jpg",
-      "KakaoTalk_20261015_213241307_01.jpg",
-      "KakaoTalk_20261015_213241307_02.jpg",
-      "KakaoTalk_20261015_213241307_03.jpg",
-      "KakaoTalk_20261015_213241307_04.jpg",
-      "KakaoTalk_20261015_213241307_05.jpg",
-      "KakaoTalk_20261015_213241307_06.jpg",
-      "KakaoTalk_20261015_213241307_07.jpg",
-      "KakaoTalk_20261015_213241307_08.jpg",
-      "KakaoTalk_20261015_213241307_09.jpg",
-      "KakaoTalk_20261015_213241307_10.jpg",
-      "KakaoTalk_20261015_213241307_11.jpg",
-      "KakaoTalk_20261015_213241307_12.jpg",
-      "KakaoTalk_20261015_213241307_13.jpg",
-      "KakaoTalk_20261015_213241307_14.jpg",
-      "KakaoTalk_20261015_213241307_15.jpg",
-      "KakaoTalk_20261015_213241307_16.jpg",
-      "KakaoTalk_20261015_213241307_17.jpg",
-      "KakaoTalk_20261015_213241307_18.jpg",
-      "KakaoTalk_20261015_213241307_19.jpg",
-      "KakaoTalk_20261015_213241307_20.jpg",
-      "KakaoTalk_20261015_213241307_21.jpg",
-      "KakaoTalk_20261015_213241307_22.jpg"
+      "A컷/KSY_01_0253.jpg",
+      "A컷/KSY_02_0040.jpg",
+      "A컷/KSY_03_0125.jpg",
+      "A컷/KSY_04_0822.jpg",
+      "A컷/KSY_05_0095.jpg",
+      "A컷/KSY_06_0976.jpg",
+      "A컷/KSY_07_0909.jpg",
+      "A컷/KSY_08_1286.jpg",
+      "A컷/KSY_09_1405_수정.jpg",
+      "A컷/KSY_10_1438.jpg",
+      "A컷/KSY_11_1211.jpg",
+      "A컷/KSY_12_1562.jpg",
+      "A컷/KSY_13_1646.jpg",
+      "A컷/KSY_14_2133.jpg",
+      "A컷/KSY_15_2454.jpg",
+      "A컷/KSY_16_2010.jpg",
+      "A컷/KSY_17_2356.jpg",
+      "A컷/KSY_18_2448.jpg",
+      "A컷/KSY_19_1130.jpg",
+      "A컷/KSY_20_1237.jpg",
+      "A컷/KSY_21_1756.jpg",
+      "A컷/KSY_22_1840_GPT 수정.png",
+      "A컷/KSY_23_1055.jpg",
+      "B컷/KSY_0078_GPT 수정본.png",
+      "B컷/KSY_0111_GPT 수정본.png",
+      "B컷/KSY_0318_GPT 수정본.png",
+      "B컷/KSY_0412_GPT 수정본.png",
+      "B컷/KSY_0645_GPT 수정본.png",
+      "B컷/KSY_0704_GPT 수정본.png",
+      "B컷/KSY_0710_GPT 수정본.png",
+      "B컷/KSY_0759_GPT 수정본.png",
+      "B컷/KSY_0773_GPT 수정본.png",
+      "B컷/KSY_1511_GPT 수정본.png",
+      "B컷/KSY_2258_GPT 수정본.png",
+      "B컷/KSY_2423_GPT 수정본.png",
+      "B컷/KSY_2647_GPT수정본.png"
     ];
     const grid = document.getElementById("grid");
     PHOTOS.forEach((file, index) => {
@@ -1035,7 +1048,7 @@
       tile.className = "tile" + (index >= 6 ? " more" : "");
       tile.dataset.index = String(index);
       tile.innerHTML = '<img alt="백경동, 강소영 웨딩 사진">';
-      tile.querySelector("img").src = "image/" + file;
+      tile.querySelector("img").src = encodeURI("image/" + file);
       grid.appendChild(tile);
     });
 
@@ -1056,7 +1069,7 @@
 
     function showPhoto(index) {
       photoIndex = (index + PHOTOS.length) % PHOTOS.length;
-      lightImg.src = "image/" + PHOTOS[photoIndex];
+      lightImg.src = encodeURI("image/" + PHOTOS[photoIndex]);
       lightCaption.textContent = (photoIndex + 1) + " / " + PHOTOS.length;
       if (!lightbox.open) lightbox.showModal();
     }
