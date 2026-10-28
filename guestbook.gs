@@ -56,18 +56,17 @@ function privateSheet_() {
 }
 
 function publicSheet_() {
-  var sheet = openOrCreate_("PUBLIC_SHEET_ID", PUBLIC_NAME, PUBLIC_HEADERS);
-  var file = DriveApp.getFileById(props_().getProperty("PUBLIC_SHEET_ID"));
-  if (file.getSharingAccess() !== DriveApp.Access.ANYONE_WITH_LINK) {
-    file.setSharing(DriveApp.Access.ANYONE_WITH_LINK, DriveApp.Permission.VIEW);
-  }
-  return sheet;
+  return openOrCreate_("PUBLIC_SHEET_ID", PUBLIC_NAME, PUBLIC_HEADERS);
 }
 
 function setupGuestbook() {
   if (!props_().getProperty("SALT")) props_().setProperty("SALT", Utilities.getUuid());
   privateSheet_();
   var sheet = publicSheet_();
+  var file = DriveApp.getFileById(sheet.getParent().getId());
+  if (file.getSharingAccess() !== DriveApp.Access.ANYONE_WITH_LINK) {
+    file.setSharing(DriveApp.Access.ANYONE_WITH_LINK, DriveApp.Permission.VIEW);
+  }
   Logger.log(props_().getProperty("PUBLIC_SHEET_ID"));
   return sheet.getParent().getId();
 }
@@ -114,15 +113,14 @@ function add_(data) {
   if (!name || !message || !password || !id) return { ok: false, error: "required" };
   if (data.website) return { ok: false, error: "spam" };
   var priv = privateSheet_();
-  if (findRow_(priv, id)) return { ok: true, notes: list_() };
+  if (findRow_(priv, id)) return { ok: true };
   if (priv.getLastRow() - 1 >= MAX_NOTES) return { ok: false, error: "full" };
   priv.appendRow([id, safe_(name), safe_(date), safe_(message), hash_(password)]);
   var pub = publicSheet_();
   pub.insertRowAfter(1);
   pub.getRange(2, 1, 1, 4).setValues([[id, safe_(name), safe_(date), safe_(message)]]);
-  textColumn_(pub);
-  textColumn_(priv);
-  return { ok: true, notes: list_() };
+  pub.getRange(2, 1).setNumberFormat("@");
+  return { ok: true };
 }
 
 function remove_(data) {
@@ -130,14 +128,14 @@ function remove_(data) {
   var password = String(data.password || "").trim();
   var priv = privateSheet_();
   var row = findRow_(priv, id);
-  if (!row) return { ok: true, notes: list_() };
+  if (!row) return { ok: true };
   var stored = String(priv.getRange(row, 5).getValue());
   if (hash_(password) !== stored) return { ok: false, error: "password" };
   priv.deleteRow(row);
   var pub = publicSheet_();
   var publicRow = findRow_(pub, id);
   if (publicRow) pub.deleteRow(publicRow);
-  return { ok: true, notes: list_() };
+  return { ok: true };
 }
 
 function handle_(data) {

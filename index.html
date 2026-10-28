@@ -1472,7 +1472,8 @@
         if (ids.has(String(pendingAdds[i].id))) pendingAdds.splice(i, 1);
       }
       pendingDeletes.forEach((id) => {
-        if (!ids.has(id)) pendingDeletes.delete(id);
+        const waiting = pendingAdds.some((note) => String(note.id) === id);
+        if (!ids.has(id) && !waiting) pendingDeletes.delete(id);
       });
       if (noteKey(shownNotes()) === before) return;
       renderNotes();
@@ -1525,22 +1526,25 @@
               showToast("삭제되었습니다.");
               return;
             }
-            try {
-              const result = await guestbook({ action: "delete", id: String(note.id), password });
+            const noteId = String(note.id);
+            pendingDeletes.add(noteId);
+            renderNotes();
+            guestbook({ action: "delete", id: noteId, password }).then((result) => {
               if (!result.ok && result.error === "password") {
+                pendingDeletes.delete(noteId);
+                renderNotes();
                 showToast("비밀번호가 맞지 않습니다.");
-                button.disabled = false;
-                box.querySelector("input").focus();
                 return;
               }
               if (!result.ok) throw new Error(result.error || "delete");
-              pendingDeletes.add(String(note.id));
-              adoptNotes(result.notes || notesCache);
+              if (result.notes) adoptNotes(result.notes);
+              else pullNotes();
               showToast("삭제되었습니다.");
-            } catch (error) {
+            }).catch(() => {
+              pendingDeletes.delete(noteId);
+              renderNotes();
               showToast("삭제하지 못했습니다. 잠시 후 다시 눌러 주세요.");
-              button.disabled = false;
-            }
+            });
           });
           item.appendChild(box);
           if (openId && openId === String(note.id)) box.querySelector("input").focus();
@@ -1617,7 +1621,7 @@
     if (sharedBook) {
       guestForm.querySelector(".empty-note").textContent = "작성한 글은 청첩장을 연 분들에게 함께 보입니다.";
       pullNotes().then(migrateLocalNotes);
-      setInterval(pullNotes, 12000);
+      setInterval(pullNotes, 4000);
       document.addEventListener("visibilitychange", () => {
         if (!document.hidden) pullNotes();
       });
@@ -1653,31 +1657,39 @@
         showToast("방명록이 등록되었습니다.");
         return;
       }
-      const submit = guestForm.querySelector("[type=submit]");
-      submit.disabled = true;
+      const noteId = String(note.id);
       pendingAdds.unshift({ id: note.id, name: note.name, date: note.date, message: note.message });
+      guestForm.reset();
+      guestForm.hidden = true;
       renderNotes();
-      try {
-        const result = await guestbook({
-          action: "add",
-          id: String(note.id),
-          name: note.name,
-          message: note.message,
-          password: note.password,
-          date: note.date
-        });
+      showToast("방명록이 등록되었습니다.");
+      guestbook({
+        action: "add",
+        id: noteId,
+        name: note.name,
+        message: note.message,
+        password: note.password,
+        date: note.date
+      }).then((result) => {
         if (!result.ok) throw new Error(result.error || "add");
-        guestForm.reset();
-        guestForm.hidden = true;
-        adoptNotes(result.notes || notesCache);
-        showToast("방명록이 등록되었습니다.");
-      } catch (error) {
-        const index = pendingAdds.findIndex((item) => String(item.id) === String(note.id));
+        if (pendingDeletes.has(noteId)) {
+          return guestbook({ action: "delete", id: noteId, password: note.password });
+        }
+        if (result.notes) adoptNotes(result.notes);
+        else pullNotes();
+        return null;
+      }).then((result) => {
+        if (!result) return;
+        if (!result.ok) throw new Error(result.error || "delete");
+        if (result.notes) adoptNotes(result.notes);
+        else pullNotes();
+      }).catch(() => {
+        const index = pendingAdds.findIndex((item) => String(item.id) === noteId);
         if (index >= 0) pendingAdds.splice(index, 1);
+        pendingDeletes.delete(noteId);
         renderNotes();
         showToast("등록하지 못했습니다. 잠시 후 다시 눌러 주세요.");
-      }
-      submit.disabled = false;
+      });
     });
 
     const RSVP_HIDE = "wedding-rsvp-hide";
