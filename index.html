@@ -255,15 +255,11 @@
       object-position: center center;
     }
     .band {
-      height: 340px;
       padding: 0;
-      overflow: hidden;
     }
     .band img {
       width: 100%;
-      height: 100%;
-      object-fit: cover;
-      object-position: center 18%;
+      height: auto;
       display: block;
     }
 
@@ -429,14 +425,37 @@
     .way p { margin: 0 0 8px; padding-right: 48px; color: #5d5d5d; }
     section, .card, .band { scroll-margin-top: var(--header); }
 
-    .thanks { margin: 0 0 28px; text-align: center; color: #666; }
-    .group-title {
-      margin: 28px 0 12px;
-      text-align: center;
-      color: #888;
-      font-size: 14px;
-      letter-spacing: 0.16em;
+    .thanks { margin: 0 0 22px; text-align: center; color: #666; }
+    .fold {
+      margin: 12px 0 0;
+      border: 1px solid #eee6df;
+      border-radius: 10px;
+      background: #fbf8f5;
+      overflow: hidden;
     }
+    .fold summary {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 14px 16px;
+      list-style: none;
+      cursor: pointer;
+      font-size: 15px;
+    }
+    .fold summary::-webkit-details-marker { display: none; }
+    .fold summary::after {
+      content: "";
+      width: 8px;
+      height: 8px;
+      border-right: 1.5px solid currentColor;
+      border-bottom: 1.5px solid currentColor;
+      transform: rotate(45deg) translateY(-2px);
+    }
+    .fold[open] summary::after { transform: rotate(-135deg) translateY(-2px); }
+    .fold.groom summary { color: #7f9478; }
+    .fold.bride summary { color: #c48b86; }
+    .fold .account { padding: 14px 16px; }
+    .fold .account:last-child { border-bottom: 0; }
     .account {
       display: flex;
       justify-content: space-between;
@@ -499,6 +518,36 @@
     }
     .notes strong { display: block; }
     .notes span { color: #999; font-size: 12px; }
+    .notes .note-delete {
+      display: flex;
+      gap: 8px;
+      margin-top: 12px;
+    }
+    .notes .note-delete input {
+      flex: 1;
+      min-width: 0;
+      border: 1px solid #e6e6e6;
+      border-radius: 8px;
+      padding: 10px 12px;
+      font-size: 15px;
+      color: #444;
+      background: #fff;
+    }
+    .notes .note-delete button {
+      flex: 0 0 auto;
+      border: 1px solid #e5e5e5;
+      border-radius: 8px;
+      padding: 0 14px;
+      background: #fff;
+      color: #666;
+    }
+    .hp {
+      position: absolute;
+      left: -9999px;
+      width: 1px;
+      height: 1px;
+      opacity: 0;
+    }
     .empty-note { color: #999; text-align: center; padding: 28px 0; }
 
     .card {
@@ -711,8 +760,8 @@
 
     <section class="greeting" id="greeting">
       <h2 class="label">소중한 분들을 초대합니다.</h2>
-      <p>손을 잡고 도란도란 이야기를 나누며<br>걷던 길에 행복이 그림자처럼 드리워졌습니다.<br>그 행복이 좋아, 우리는 조금 더 긴 길을<br>함께 걷기로 했습니다.</p>
-      <p>귀한 걸음으로 축하하여 주시면<br>더 없는 기쁨으로 간직하겠습니다.</p>
+      <p>도란도란 이야기하며<br>손잡고 발맞춰 걷는 길에<br>행복이 그림자처럼 드리웠습니다.</p>
+      <p>그 행복이 좋아,<br>우리는 조금 더 긴 길을 함께 걷기로 했습니다.<br>그 첫걸음에 함께해 주세요.</p>
     </section>
 
     <div class="band">
@@ -855,8 +904,9 @@
     <section id="account">
       <h2 class="label">마음 전하실 곳</h2>
       <p class="thanks">소중한 축하를 보내주셔서 감사드리며,<br>따뜻한 마음에 깊이 감사드립니다.</p>
-      <p class="group-title">신랑측</p>
-      <article class="account">
+      <details class="fold groom">
+        <summary>신랑측</summary>
+        <article class="account">
         <div>
           <h3>신랑 아버지</h3>
           <p>백성욱</p>
@@ -880,8 +930,10 @@
         </div>
         <button class="copy-btn" type="button" data-copy="우리은행 1002-348-029954">복사</button>
       </article>
-      <p class="group-title">신부측</p>
-      <article class="account">
+      </details>
+      <details class="fold bride">
+        <summary>신부측</summary>
+        <article class="account">
         <div>
           <h3>신부 아버지</h3>
           <p>강성범</p>
@@ -905,6 +957,7 @@
         </div>
         <button class="copy-btn" type="button" data-copy="우리은행 1002-348-029954">복사</button>
       </article>
+      </details>
     </section>
 
     <section id="guestbook">
@@ -917,6 +970,7 @@
         <label>이름<input name="name" required maxlength="20" placeholder="이름"></label>
         <label>비밀번호<input name="password" required maxlength="20" type="password" placeholder="삭제할 때 사용합니다"></label>
         <label>메시지<textarea name="message" required maxlength="200" placeholder="축하의 말을 남겨 주세요"></textarea></label>
+        <input class="hp" name="website" tabindex="-1" autocomplete="off" aria-hidden="true">
         <div class="dialog-actions">
           <button class="ghost-btn" type="button" id="cancelWrite">취소</button>
           <button class="solid-btn" type="submit">등록</button>
@@ -1380,25 +1434,54 @@
     renderCountdown();
     setInterval(renderCountdown, 1000);
 
-    const SMS_BODY = "백경동 ♥ 강소영 결혼식에 초대합니다.\n2027년 2월 20일 토요일 오후 12시 20분\n왕십리 디노체컨벤션웨딩홀\nhttps://bkdong93.github.io/kdbaik_mobile_wed/";
-    document.querySelectorAll(".sms").forEach((link) => {
-      link.addEventListener("click", (event) => {
-        event.preventDefault();
-        const ios = /iPhone|iPad/i.test(navigator.userAgent);
-        const sep = ios ? "&" : "?";
-        location.href = "sms:" + link.dataset.phone + sep + "body=" + encodeURIComponent(SMS_BODY);
-      });
-    });
-
     const NOTES_KEY = "wedding-guestbook";
+    const GUESTBOOK_URL = "https://script.google.com/macros/s/AKfycbwiIbD-0YxakK4-IuId7fAx35KiO0-YxMQoDbJ-hV8n44nJtVQCnntUzKX80EmsKLzG/exec";
+    const GUESTBOOK_SHEET = "1mAcLGJX3w8T0dvQ-ewfLfaryNpStQhafKye97LcS8nE";
     const notesEl = document.getElementById("notes");
     const guestForm = document.getElementById("guestForm");
+    const sharedBook = Boolean(GUESTBOOK_URL && GUESTBOOK_SHEET);
+    let notesCache = [];
+    const pendingAdds = [];
+    const pendingDeletes = new Set();
+    let pulling = false;
 
     function loadNotes() {
       return JSON.parse(localStorage.getItem(NOTES_KEY) || "[]");
     }
+    function saveNotes(notes) {
+      localStorage.setItem(NOTES_KEY, JSON.stringify(notes));
+    }
+    function todayText() {
+      const now = new Date();
+      return now.getFullYear() + "." + String(now.getMonth() + 1).padStart(2, "0") + "." + String(now.getDate()).padStart(2, "0");
+    }
+    function shownNotes() {
+      if (!sharedBook) return loadNotes();
+      const ids = new Set(notesCache.map((note) => String(note.id)));
+      const extras = pendingAdds.filter((note) => !ids.has(String(note.id)) && !pendingDeletes.has(String(note.id)));
+      return extras.concat(notesCache.filter((note) => !pendingDeletes.has(String(note.id))));
+    }
+    function noteKey(notes) {
+      return notes.map((note) => [String(note.id), note.name, note.date, note.message].join("\u0001")).join("\u0002");
+    }
+    function adoptNotes(notes) {
+      const before = noteKey(shownNotes());
+      notesCache = notes;
+      const ids = new Set(notesCache.map((note) => String(note.id)));
+      for (let i = pendingAdds.length - 1; i >= 0; i -= 1) {
+        if (ids.has(String(pendingAdds[i].id))) pendingAdds.splice(i, 1);
+      }
+      pendingDeletes.forEach((id) => {
+        if (!ids.has(id)) pendingDeletes.delete(id);
+      });
+      if (noteKey(shownNotes()) === before) return;
+      renderNotes();
+    }
     function renderNotes() {
-      const notes = loadNotes();
+      const notes = shownNotes();
+      const openId = notesEl.querySelector(".note-delete")
+        ? notesEl.querySelector(".note-delete").closest("li").dataset.id
+        : "";
       notesEl.innerHTML = "";
       if (!notes.length) {
         notesEl.innerHTML = '<li class="empty-note">첫 축하 메시지를 남겨 주세요.</li>';
@@ -1406,6 +1489,7 @@
       }
       notes.forEach((note) => {
         const item = document.createElement("li");
+        item.dataset.id = String(note.id);
         item.innerHTML = "<strong></strong><span></span><p></p>";
         item.querySelector("strong").textContent = note.name;
         item.querySelector("span").textContent = note.date;
@@ -1415,17 +1499,127 @@
         remove.type = "button";
         remove.textContent = "삭제";
         remove.addEventListener("click", () => {
-          const password = prompt("비밀번호를 입력해 주세요.");
-          if (password !== note.password) {
-            showToast("비밀번호가 맞지 않습니다.");
+          const existing = item.querySelector(".note-delete");
+          if (existing) {
+            existing.hidden = false;
+            existing.querySelector("input").focus();
             return;
           }
-          const next = loadNotes().filter((entry) => entry.id !== note.id);
-          localStorage.setItem(NOTES_KEY, JSON.stringify(next));
-          renderNotes();
+          const box = document.createElement("form");
+          box.className = "note-delete";
+          box.innerHTML = '<input type="password" maxlength="20" placeholder="비밀번호" required autocomplete="off"><button type="submit">확인</button>';
+          box.addEventListener("submit", async (event) => {
+            event.preventDefault();
+            const password = box.querySelector("input").value.trim();
+            const button = box.querySelector("button");
+            button.disabled = true;
+            if (!sharedBook) {
+              if (password !== String(note.password || "").trim()) {
+                showToast("비밀번호가 맞지 않습니다.");
+                button.disabled = false;
+                box.querySelector("input").focus();
+                return;
+              }
+              saveNotes(loadNotes().filter((entry) => String(entry.id) !== String(note.id)));
+              renderNotes();
+              showToast("삭제되었습니다.");
+              return;
+            }
+            try {
+              const result = await guestbook({ action: "delete", id: String(note.id), password });
+              if (!result.ok && result.error === "password") {
+                showToast("비밀번호가 맞지 않습니다.");
+                button.disabled = false;
+                box.querySelector("input").focus();
+                return;
+              }
+              if (!result.ok) throw new Error(result.error || "delete");
+              pendingDeletes.add(String(note.id));
+              adoptNotes(result.notes || notesCache);
+              showToast("삭제되었습니다.");
+            } catch (error) {
+              showToast("삭제하지 못했습니다. 잠시 후 다시 눌러 주세요.");
+              button.disabled = false;
+            }
+          });
+          item.appendChild(box);
+          if (openId && openId === String(note.id)) box.querySelector("input").focus();
+          else box.querySelector("input").focus();
         });
         item.appendChild(remove);
         notesEl.appendChild(item);
+      });
+    }
+
+    function guestbook(payload) {
+      return fetch(GUESTBOOK_URL, {
+        method: "POST",
+        redirect: "follow",
+        headers: { "Content-Type": "text/plain;charset=utf-8" },
+        body: JSON.stringify(payload)
+      }).then((response) => response.json());
+    }
+    function pullNotes() {
+      if (!sharedBook || pulling || document.hidden) return Promise.resolve();
+      pulling = true;
+      const callback = "gb_" + Date.now();
+      return new Promise((resolve) => {
+        const script = document.createElement("script");
+        let settled = false;
+        const timer = setTimeout(() => finish(null), 8000);
+        function finish(payload) {
+          if (settled) return;
+          settled = true;
+          clearTimeout(timer);
+          window[callback] = function () {};
+          script.remove();
+          pulling = false;
+          if (payload && payload.status !== "error" && payload.table) {
+            const notes = (payload.table.rows || []).map((row) => {
+              const cell = (index) => row.c && row.c[index] && row.c[index].v != null ? String(row.c[index].v) : "";
+              return { id: cell(0), name: cell(1), date: cell(2), message: cell(3) };
+            }).filter((note) => note.id && note.id !== "id");
+            adoptNotes(notes);
+          }
+          resolve();
+        }
+        window[callback] = finish;
+        script.onerror = () => finish(null);
+        script.src = "https://docs.google.com/spreadsheets/d/" + GUESTBOOK_SHEET
+          + "/gviz/tq?headers=1&tq=" + encodeURIComponent("select A,B,C,D")
+          + "&tqx=" + encodeURIComponent("out:json;responseHandler:" + callback)
+          + "&t=" + Date.now();
+        document.head.appendChild(script);
+      });
+    }
+    async function migrateLocalNotes() {
+      if (!sharedBook || localStorage.getItem(NOTES_KEY + "-moved")) return;
+      const local = loadNotes();
+      if (!local.length) {
+        localStorage.setItem(NOTES_KEY + "-moved", "1");
+        return;
+      }
+      for (const note of [...local].reverse()) {
+        const result = await guestbook({
+          action: "add",
+          id: String(note.id),
+          name: note.name,
+          message: note.message,
+          password: note.password,
+          date: note.date
+        });
+        if (!result.ok) return;
+      }
+      localStorage.setItem(NOTES_KEY + "-moved", "1");
+      pullNotes();
+    }
+
+    if (sharedBook) {
+      guestForm.querySelector(".empty-note").textContent = "작성한 글은 청첩장을 연 분들에게 함께 보입니다.";
+      pullNotes().then(migrateLocalNotes);
+      setInterval(pullNotes, 12000);
+      document.addEventListener("visibilitychange", () => {
+        if (!document.hidden) pullNotes();
       });
     }
     renderNotes();
@@ -1438,29 +1632,57 @@
       guestForm.hidden = true;
       guestForm.reset();
     });
-    guestForm.addEventListener("submit", (event) => {
+    guestForm.addEventListener("submit", async (event) => {
       event.preventDefault();
       const data = new FormData(guestForm);
-      const notes = loadNotes();
-      const now = new Date();
-      const date = now.getFullYear() + "." + String(now.getMonth() + 1).padStart(2, "0") + "." + String(now.getDate()).padStart(2, "0");
-      notes.unshift({
+      if (String(data.get("website") || "").trim()) return;
+      const note = {
         id: Date.now(),
         name: data.get("name").trim(),
-        password: data.get("password"),
+        password: String(data.get("password") || "").trim(),
         message: data.get("message").trim(),
-        date
-      });
-      localStorage.setItem(NOTES_KEY, JSON.stringify(notes));
-      guestForm.reset();
-      guestForm.hidden = true;
+        date: todayText()
+      };
+      if (!sharedBook) {
+        const notes = loadNotes();
+        notes.unshift(note);
+        saveNotes(notes);
+        guestForm.reset();
+        guestForm.hidden = true;
+        renderNotes();
+        showToast("방명록이 등록되었습니다.");
+        return;
+      }
+      const submit = guestForm.querySelector("[type=submit]");
+      submit.disabled = true;
+      pendingAdds.unshift({ id: note.id, name: note.name, date: note.date, message: note.message });
       renderNotes();
-      showToast("방명록이 등록되었습니다.");
+      try {
+        const result = await guestbook({
+          action: "add",
+          id: String(note.id),
+          name: note.name,
+          message: note.message,
+          password: note.password,
+          date: note.date
+        });
+        if (!result.ok) throw new Error(result.error || "add");
+        guestForm.reset();
+        guestForm.hidden = true;
+        adoptNotes(result.notes || notesCache);
+        showToast("방명록이 등록되었습니다.");
+      } catch (error) {
+        const index = pendingAdds.findIndex((item) => String(item.id) === String(note.id));
+        if (index >= 0) pendingAdds.splice(index, 1);
+        renderNotes();
+        showToast("등록하지 못했습니다. 잠시 후 다시 눌러 주세요.");
+      }
+      submit.disabled = false;
     });
 
     const RSVP_HIDE = "wedding-rsvp-hide";
     const today = new Date().toISOString().slice(0, 10);
-    if (localStorage.getItem(RSVP_HIDE) !== today) document.getElementById("rsvp").showModal();
+    // if (localStorage.getItem(RSVP_HIDE) !== today) document.getElementById("rsvp").showModal();
 
     document.getElementById("rsvp").addEventListener("close", () => {
       if (document.getElementById("hideToday").checked) localStorage.setItem(RSVP_HIDE, today);
